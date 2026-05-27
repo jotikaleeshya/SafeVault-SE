@@ -1,0 +1,37 @@
+.strength-bar-container {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.strength-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.strength-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+
+.strength-score {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.strength-segments {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.strength-segment {
+  height: 4px;
+  border-radius: var(--radius-full);
+}
