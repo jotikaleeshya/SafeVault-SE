@@ -1,0 +1,34 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 24, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.15s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  animation: modalSlideUp 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-container--sm { width: 380px; }
+.modal-container--md { width: 460px; }
+.modal-container--lg { width: 560px; }
