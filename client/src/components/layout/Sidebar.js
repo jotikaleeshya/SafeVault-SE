@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 // import { useAuth } from '../../context/AuthContext';
 import { useVault } from '../../context/VaultContext';
 import './Sidebar.css';
@@ -12,10 +12,18 @@ const Sidebar = () => {
   // const { logout } = useAuth();
   const { setSelectedEntry } = useVault();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isSettings = location.pathname === '/settings';
 
   const handleAddEntry = () => {
     setSelectedEntry(null);
     navigate('/dashboard', { state: { openAddModal: true } });
+  };
+
+  const handleLogout = () => {
+    // logout();
+    navigate('/login');
   };
 
   return (
@@ -69,13 +77,24 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <button className="sidebar-add-btn" onClick={handleAddEntry}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Add Entry
-        </button>
+        {isSettings ? (
+          <button className="sidebar-logout-btn" onClick={handleLogout}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+        ) : (
+          <button className="sidebar-add-btn" onClick={handleAddEntry}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Entry
+          </button>
+        )}
       </div>
     </aside>
   );
