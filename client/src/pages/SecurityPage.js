@@ -1,0 +1,187 @@
+import React, { useEffect, useState } from 'react';
+import Sidebar from '../components/layout/Sidebar';
+import Topbar from '../components/layout/Topbar';
+import SiteFavicon from '../components/common/SiteFavicon';
+import EditEntryModal from '../components/modals/EditEntryModal';
+import SuccessModal from '../components/modals/SuccessModal';
+import { useVault } from '../context/VaultContext';
+import { getStrengthColor, getStrengthScore } from '../utils/passwordUtils';
+import './SecurityPage.css';
+
+/**
+ * SecurityPage - displays password strength analysis
+ * Single Responsibility: security reporting view
+ */
+const SecurityPage = () => {
+  const { getSecurityAnalysis } = useVault();
+  const [analysis, setAnalysis] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedWeakEntry, setSelectedWeakEntry] = useState(null);
+  const [modal, setModal] = useState(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getSecurityAnalysis();
+        setAnalysis(data);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, [getSecurityAnalysis]);
+
+  const circumference = 2 * Math.PI * 54; // r=54
+  const strokeDashoffset = analysis
+    ? circumference - (analysis.overallScore / 100) * circumference
+    : circumference;
+
+  const handleEditSuccess = () => setModal('success');
+  const handleSuccessClose = async () => {
+    setModal(null);
+    setSelectedWeakEntry(null);
+    setIsLoading(true);
+    try {
+      const data = await getSecurityAnalysis();
+      setAnalysis(data);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="security-layout">
+      <Sidebar />
+      <div className="security-main">
+        <Topbar />
+        <div className="security-body">
+          {isLoading ? (
+            <div className="security-loading">Loading security analysis...</div>
+          ) : analysis ? (
+            <>
+              {/* Score + Summary */}
+              <div className="security-overview">
+                <div className="security-score-ring">
+                  <svg width="140" height="140" viewBox="0 0 140 140">
+                    <circle cx="70" cy="70" r="54" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+                    <circle
+                      cx="70" cy="70" r="54"
+                      fill="none"
+                      stroke="url(#scoreGrad)"
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={strokeDashoffset}
+                      transform="rotate(-90 70 70)"
+                      style={{ transition: 'stroke-dashoffset 1s ease' }}
+                    />
+                    <defs>
+                      <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#4f73ff" />
+                        <stop offset="100%" stopColor="#7c3aed" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="security-score-center">
+                    <span className="security-score-label">Security Score</span>
+                    <span className="security-score-value">{analysis.overallScore}%</span>
+                  </div>
+                </div>
+
+                <div className="security-summary">
+                  <div className="security-summary-row">
+                    <span className="security-summary-label" style={{ color: '#22c55e' }}>Strong</span>
+                    <div className="security-summary-bar">
+                      <div className="security-summary-fill" style={{
+                        width: `${(analysis.strong / (analysis.strong + analysis.weak + analysis.risk || 1)) * 100}%`,
+                        background: '#22c55e',
+                      }} />
+                    </div>
+                    <span className="security-summary-count">{analysis.strong} entries</span>
+                  </div>
+                  <div className="security-summary-row">
+                    <span className="security-summary-label" style={{ color: '#eab308' }}>Weak</span>
+                    <div className="security-summary-bar">
+                      <div className="security-summary-fill" style={{
+                        width: `${(analysis.weak / (analysis.strong + analysis.weak + analysis.risk || 1)) * 100}%`,
+                        background: '#eab308',
+                      }} />
+                    </div>
+                    <span className="security-summary-count">{analysis.weak} entries</span>
+                  </div>
+                  <div className="security-summary-row">
+                    <span className="security-summary-label" style={{ color: '#ef4444' }}>Risk</span>
+                    <div className="security-summary-bar">
+                      <div className="security-summary-fill" style={{
+                        width: `${(analysis.risk / (analysis.strong + analysis.weak + analysis.risk || 1)) * 100}%`,
+                        background: '#ef4444',
+                      }} />
+                    </div>
+                    <span className="security-summary-count">{analysis.risk} entry</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Entry list + sidebar */}
+              <div className="security-content">
+                <div className="security-entries">
+                  {analysis.entries.map(entry => (
+                    <button
+                      key={entry._id}
+                      className={`security-entry-row ${selectedWeakEntry?._id === entry._id ? 'active' : ''}`}
+                      onClick={() => setSelectedWeakEntry(entry)}
+                    >
+                      <SiteFavicon siteName={entry.siteName} size={36} />
+                      <div className="security-entry-info">
+                        <span className="security-entry-name">{entry.siteName}</span>
+                        <span className="security-entry-user">{entry.username}</span>
+                      </div>
+                      <div className="security-entry-bar-wrap">
+                        <div className="security-entry-bar">
+                          <div
+                            className="security-entry-bar-fill"
+                            style={{
+                              width: `${getStrengthScore(entry.passwordStrength)}%`,
+                              background: getStrengthColor(entry.passwordStrength),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {selectedWeakEntry && (
+                  <div className="security-action-panel">
+                    <h3 className="security-action-title">Keep Your<br />Accounts Safe!</h3>
+                    <button
+                      className="security-edit-btn"
+                      onClick={() => setModal('edit')}
+                    >
+                      Edit Password
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="security-loading">No data available.</div>
+          )}
+        </div>
+      </div>
+
+      {modal === 'edit' && selectedWeakEntry && (
+        <EditEntryModal
+          entry={selectedWeakEntry}
+          onClose={() => setModal(null)}
+          onSuccess={handleEditSuccess}
+        />
+      )}
+      {modal === 'success' && (
+        <SuccessModal type="saved" onClose={handleSuccessClose} />
+      )}
+    </div>
+  );
+};
+
+export default SecurityPage;
