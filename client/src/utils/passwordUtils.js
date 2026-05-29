@@ -18,9 +18,8 @@ export const calculatePasswordStrength = (password) => {
 
   let label = 'Weak';
   let color = '#ef4444';
-  if (score >= 80) { label = 'Impenetrable'; color = '#22c55e'; }
-  else if (score >= 60) { label = 'Strong'; color = '#22c55e'; }
-  else if (score >= 40) { label = 'Fair'; color = '#eab308'; }
+  if (score >= 75) { label = 'Strong'; color = '#22c55e'; }
+  else if (score >= 40) { label = 'Medium'; color = '#eab308'; }
 
   return { score, label, color };
 };
@@ -30,9 +29,8 @@ export const calculatePasswordStrength = (password) => {
  */
 export const getStrengthColor = (label) => {
   switch (label) {
-    case 'Impenetrable':
     case 'Strong': return '#22c55e';
-    case 'Fair': return '#eab308';
+    case 'Medium': return '#eab308';
     default: return '#ef4444';
   }
 };
@@ -42,9 +40,8 @@ export const getStrengthColor = (label) => {
  */
 export const getStrengthScore = (label) => {
   switch (label) {
-    case 'Impenetrable': return 100;
-    case 'Strong': return 75;
-    case 'Fair': return 45;
-    default: return 20;
+    case 'Strong': return 100;
+    case 'Medium': return 60;
+    default: return 25;
   }
 };

@@ -8,8 +8,13 @@ import './StrengthBar.css';
  */
 const StrengthBar = ({ password }) => {
   const { score, label, color } = calculatePasswordStrength(password);
-  const segments = 4;
-  const filledSegments = Math.ceil((score / 100) * segments);
+  const segments = 3;
+  let filledSegments = 0;
+  if (score > 0) {
+    if (label === 'Strong') filledSegments = 3;
+    else if (label === 'Medium') filledSegments = 2;
+    else filledSegments = 1;
+  }
 
   return (
     <div className="strength-bar-container">

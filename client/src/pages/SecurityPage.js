@@ -97,27 +97,27 @@ const SecurityPage = () => {
                         background: '#22c55e',
                       }} />
                     </div>
-                    <span className="security-summary-count">{analysis.strong} entries</span>
+                    <span className="security-summary-count">{analysis.strong} {analysis.strong === 1 ? 'entry' : 'entries'}</span>
                   </div>
                   <div className="security-summary-row">
-                    <span className="security-summary-label" style={{ color: '#eab308' }}>Weak</span>
+                    <span className="security-summary-label" style={{ color: '#eab308' }}>Medium</span>
                     <div className="security-summary-bar">
                       <div className="security-summary-fill" style={{
                         width: `${(analysis.weak / (analysis.strong + analysis.weak + analysis.risk || 1)) * 100}%`,
                         background: '#eab308',
                       }} />
                     </div>
-                    <span className="security-summary-count">{analysis.weak} entries</span>
+                    <span className="security-summary-count">{analysis.weak} {analysis.weak === 1 ? 'entry' : 'entries'}</span>
                   </div>
                   <div className="security-summary-row">
-                    <span className="security-summary-label" style={{ color: '#ef4444' }}>Risk</span>
+                    <span className="security-summary-label" style={{ color: '#ef4444' }}>Weak</span>
                     <div className="security-summary-bar">
                       <div className="security-summary-fill" style={{
                         width: `${(analysis.risk / (analysis.strong + analysis.weak + analysis.risk || 1)) * 100}%`,
                         background: '#ef4444',
                       }} />
                     </div>
-                    <span className="security-summary-count">{analysis.risk} entry</span>
+                    <span className="security-summary-count">{analysis.risk} {analysis.risk === 1 ? 'entry' : 'entries'}</span>
                   </div>
                 </div>
               </div>
