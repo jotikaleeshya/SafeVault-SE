@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeVault</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Initial loading spinner -->
+    <div id="loading-view" class="view">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- Login view -->
+    <div id="login-view" class="view hidden">
+      <div class="header">
+        <span class="logo">SV</span>
+        <h1>SafeVault</h1>
+      </div>
+      <form id="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="your@email.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="master-password">Master Password</label>
+          <input type="password" id="master-password" placeholder="Master password" required />
+        </div>
+        <div id="login-error" class="error hidden"></div>
+        <button type="submit" id="login-btn">Sign In</button>
+      </form>
+      <p class="hint">Sign in with your SafeVault account</p>
+    </div>
+
+    <!-- Main view -->
+    <div id="main-view" class="view hidden">
+      <div class="header">
+        <span class="logo">SV</span>
+        <h1>SafeVault</h1>
+        <button id="logout-btn" class="icon-btn" title="Sign out">↩</button>
+      </div>
+
+      <div class="site-row">
+        <span class="site-label">Site:</span>
+        <span id="current-domain" class="site-value"></span>
+      </div>
+
+      <div id="entries-container">
+        <div id="entries-loading" class="state-msg hidden">
+          <div class="spinner small"></div>
+          <span>Checking vault…</span>
+        </div>
+        <div id="no-entries" class="state-msg hidden">
+          <div class="empty-icon">—</div>
+          <p>No saved passwords for this site.</p>
+          <p class="hint">Open SafeVault to add one.</p>
+        </div>
+        <div id="error-state" class="state-msg hidden">
+          <div class="empty-icon">!</div>
+          <p id="error-text">Something went wrong.</p>
+        </div>
+        <div id="entries-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

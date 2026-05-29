@@ -1,33 +1,25 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Single Responsibility: Token verification only
-const protect = async (req, res, next) => {
-  let token;
-
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-
-  if (!token) {
+async function protect(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) {
     return res.status(401).json({ success: false, message: 'Not authorized, no token' });
   }
 
+  const token = header.slice(7);
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select('-masterPassword');
-
-    if (!req.user) {
-      return res.status(401).json({ success: false, message: 'User not found' });
-    }
-
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(payload.id).select('-masterPassword');
+    if (!user) return res.status(401).json({ success: false, message: 'User not found' });
+    req.user = user;
     next();
-  } catch (error) {
-    return res.status(401).json({ success: false, message: 'Not authorized, invalid token' });
+  } catch {
+    res.status(401).json({ success: false, message: 'Not authorized, invalid token' });
   }
-};
+}
 
-module.exports = { protect };
+// Named export for: const { protect } = require('./authMiddleware')
+// Default export for: const authMiddleware = require('./authMiddleware')
+module.exports = protect;
+module.exports.protect = protect;
