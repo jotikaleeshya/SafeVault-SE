@@ -16,6 +16,7 @@ export const authService = {
   login:                (email, masterPassword) => api.post('/auth/login',         { email, masterPassword }),
   getMe:                ()                      => api.get('/auth/me'),
   verifyMasterPassword: (masterPassword)        => api.post('/auth/verify-master', { masterPassword }),
+  updateSettings:       (settings)              => api.patch('/auth/settings',      settings),
 };
 
 export const vaultService = {

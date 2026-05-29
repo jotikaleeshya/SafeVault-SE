@@ -9,14 +9,24 @@ import { useNavigate } from 'react-router-dom';
  * Single Responsibility: settings display and toggles
  */
 const SettingsPage = () => {
-  const { user } = useAuth();
-  const [autofill, setAutofill] = useState(true);
+  const { user, updateSettings } = useAuth();
+  const [autofill, setAutofill] = useState(() => user?.settings?.autofill ?? true);
   const navigate = useNavigate();
+
+  const handleAutofillToggle = async () => {
+    const next = !autofill;
+    setAutofill(next);
+    try {
+      await updateSettings({ autofill: next });
+    } catch {
+      setAutofill(!next);
+    }
+  };
 
   const settingsRows = [
     { label: 'About', type: 'link', href: '/about' },
     { label: 'Help', type: 'link' , href: '/help'},
-    { label: 'Autofill', type: 'toggle', value: autofill, onChange: () => setAutofill(v => !v) },
+    { label: 'Autofill', type: 'toggle', value: autofill, onChange: handleAutofillToggle },
   ];
 
   return (

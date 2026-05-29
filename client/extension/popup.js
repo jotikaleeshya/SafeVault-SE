@@ -32,6 +32,15 @@ async function apiGetEntries(token) {
   return data.entries; // array of vault entry objects
 }
 
+async function apiGetSettings(token) {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.user?.settings ?? null;
+}
+
 async function apiRevealEntry(token, id) {
   const res = await fetch(`${API_BASE}/vault/${id}/reveal`, {
     method: 'POST',
@@ -157,7 +166,7 @@ async function handleCopy(entry, btn) {
 
 // ── Entry card ───────────────────────────────────────────────────────────────
 
-function buildEntryCard(entry) {
+function buildEntryCard(entry, autofillEnabled) {
   const card = document.createElement('div');
   card.className = 'entry-card';
 
@@ -172,17 +181,20 @@ function buildEntryCard(entry) {
   const actions = document.createElement('div');
   actions.className = 'entry-actions';
 
-  const autofillBtn = document.createElement('button');
-  autofillBtn.className = 'btn-autofill';
-  autofillBtn.textContent = 'Autofill';
-  autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
+  if (autofillEnabled) {
+    const autofillBtn = document.createElement('button');
+    autofillBtn.className = 'btn-autofill';
+    autofillBtn.textContent = 'Autofill';
+    autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
+    actions.append(autofillBtn);
+  }
 
   const copyBtn = document.createElement('button');
   copyBtn.className = 'btn-copy';
   copyBtn.textContent = 'Copy pw';
   copyBtn.addEventListener('click', () => handleCopy(entry, copyBtn));
 
-  actions.append(autofillBtn, copyBtn);
+  actions.append(copyBtn);
   card.append(site, uname, actions);
   return card;
 }
@@ -213,7 +225,8 @@ async function loadMainView() {
 
   try {
     const { sv_token: token } = await storage.get(['sv_token']);
-    const entries = await apiGetEntries(token);
+    const [entries, settings] = await Promise.all([apiGetEntries(token), apiGetSettings(token)]);
+    const autofillEnabled = settings?.autofill ?? true;
     const matched = entries.filter((e) => matchesDomain(e, hostname));
 
     hide(loadingEl);
@@ -221,7 +234,7 @@ async function loadMainView() {
     if (matched.length === 0) {
       show(noEntriesEl);
     } else {
-      matched.forEach((e) => listEl.appendChild(buildEntryCard(e)));
+      matched.forEach((e) => listEl.appendChild(buildEntryCard(e, autofillEnabled)));
     }
   } catch (err) {
     hide(loadingEl);
