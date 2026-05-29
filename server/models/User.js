@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Single Responsibility: User data management
 const UserSchema = new mongoose.Schema(
   {
     email: {
@@ -34,17 +33,17 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Hash master password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('masterPassword')) return next();
-  const salt = await bcrypt.genSalt(12);
-  this.masterPassword = await bcrypt.hash(this.masterPassword, salt);
+  this.masterPassword = await bcrypt.hash(this.masterPassword, 12);
   next();
 });
 
-// Method to verify master password
-UserSchema.methods.verifyMasterPassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.masterPassword);
+UserSchema.methods.verifyMasterPassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.masterPassword);
 };
+
+// Alias used by authRoutes2
+UserSchema.methods.verifyPassword = UserSchema.methods.verifyMasterPassword;
 
 module.exports = mongoose.model('User', UserSchema);

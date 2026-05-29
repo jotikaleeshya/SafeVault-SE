@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { encrypt } = require('../utils/crypto');
 
-// Single Responsibility: Vault entry data management
 const VaultEntrySchema = new mongoose.Schema(
   {
     user: {
@@ -24,18 +23,18 @@ const VaultEntrySchema = new mongoose.Schema(
       required: [true, 'Username is required'],
       trim: true,
     },
-    // NOTE: In production, password should be encrypted with user's derived key
-    // For now, stored as plain text for page-flow demonstration
     password: {
       type: String,
       required: [true, 'Password is required'],
     },
-
+    notes: {
+      type: String,
+      default: '',
+    },
     isFavorite: {
       type: Boolean,
       default: false,
     },
-
     passwordStrength: {
       type: String,
       enum: ['Weak', 'Fair', 'Strong', 'Impenetrable'],
@@ -47,7 +46,6 @@ const VaultEntrySchema = new mongoose.Schema(
       max: 100,
       default: 0,
     },
-
     favicon: {
       type: String,
       default: null,
@@ -56,8 +54,6 @@ const VaultEntrySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
-// Index for faster queries
 VaultEntrySchema.index({ user: 1, createdAt: -1 });
 
 module.exports = mongoose.model('VaultEntry', VaultEntrySchema);
