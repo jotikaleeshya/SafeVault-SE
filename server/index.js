@@ -12,7 +12,12 @@ app.use(cors({
       origin === 'http://localhost:3000' ||
       /^chrome-extension:\/\//.test(origin) ||
       /^moz-extension:\/\//.test(origin);
-    callback(allowed ? null : new Error('CORS blocked'), allowed);
+
+    if (allowed) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
   },
   credentials: true,
 }));
