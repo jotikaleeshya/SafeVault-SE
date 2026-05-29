@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PasswordInput from '../components/common/PasswordInput';
+import CannotChangePasswordModal from '../components/modals/CannotChangePasswordModal';
 import './LoginPage.css';
 
 /**
@@ -17,30 +18,58 @@ const LoginPage = () => {
   const [trustDevice, setTrustDevice] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showCannotChangeModal, setShowCannotChangeModal] = useState(false);
 
   const handleChange = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }));
     setError('');
   };
 
-  const handleSubmit = async () => {
+  const handleRegisterSubmit = () => {
     if (!form.email || !form.masterPassword) {
       setError('Email and master password are required.');
       return;
     }
+    // Show cannot change warning first
+    setShowCannotChangeModal(true);
+  };
+
+  const handleCannotChangeConfirm = () => {
+    setShowCannotChangeModal(false);
+    executeRegister();
+  };
+
+  const executeRegister = async () => {
     setIsLoading(true);
     setError('');
     try {
-      if (mode === 'login') {
-        await login(form.email, form.masterPassword);
-      } else {
-        await register(form.email, form.masterPassword);
-      }
+      await register(form.email, form.masterPassword);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (mode === 'login') {
+      if (!form.email || !form.masterPassword) {
+        setError('Email and master password are required.');
+        return;
+      }
+      setIsLoading(true);
+      setError('');
+      try {
+        await login(form.email, form.masterPassword);
+        navigate('/dashboard');
+      } catch (err) {
+        setError(err.response?.data?.message || 'Authentication failed. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      handleRegisterSubmit();
     }
   };
 
@@ -168,6 +197,13 @@ const LoginPage = () => {
       <footer className="login-footer">
         © 2026 SAFEVAULT SECURITY SYSTEMS. ALL RIGHTS RESERVED.
       </footer>
+
+      {showCannotChangeModal && (
+        <CannotChangePasswordModal 
+          onClose={() => setShowCannotChangeModal(false)} 
+          onConfirm={handleCannotChangeConfirm} 
+        />
+      )}
     </div>
   );
 };
