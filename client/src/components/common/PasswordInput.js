@@ -38,6 +38,8 @@ const PasswordInput = ({ value, onChange, placeholder = '•••••••�
           value={value}
           onChange={onChange}
           onInput={onChange}
+          onKeyUp={onChange}
+          onBlur={onChange}
           placeholder={placeholder}
           id={id}
           name={name}
