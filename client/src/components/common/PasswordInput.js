@@ -17,18 +17,14 @@ const PasswordInput = ({ value, onChange, placeholder = '•••••••�
         </svg>
       </span>
       <input
-        type="text"
-        className={`password-input-field ${!isVisible ? 'password-hidden' : ''}`}
+        type={isVisible ? 'text' : 'password'}
+        className="password-input-field"
         value={value}
         onChange={onChange}
-        onInput={onChange}
         placeholder={placeholder}
         id={id}
         name={name}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="none"
-        spellCheck="false"
+        autoComplete={autoComplete}
       />
       {showToggle && (
         <button
