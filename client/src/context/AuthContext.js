@@ -59,6 +59,12 @@ export const AuthProvider = ({ children }) => {
     return res.data.success;
   }, []);
 
+  const updateSettings = useCallback(async (settings) => {
+    const res = await authService.updateSettings(settings);
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -68,6 +74,7 @@ export const AuthProvider = ({ children }) => {
       register,
       logout,
       verifyMasterPassword,
+      updateSettings,
     }}>
       {children}
     </AuthContext.Provider>

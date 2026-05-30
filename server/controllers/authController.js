@@ -96,4 +96,24 @@ const getMe = async (req, res) => {
   res.json({ success: true, user: req.user });
 };
 
-module.exports = { register, login, verifyMasterPassword, getMe };
+// @desc   Update user settings
+// @route  PATCH /api/auth/settings
+// @access Private
+const updateSettings = async (req, res) => {
+  try {
+    const { autofill } = req.body;
+    if (typeof autofill !== 'boolean') {
+      return res.status(400).json({ success: false, message: 'autofill must be a boolean' });
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { 'settings.autofill': autofill },
+      { new: true, select: '-masterPassword' }
+    );
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { register, login, verifyMasterPassword, getMe, updateSettings };
