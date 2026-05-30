@@ -25,6 +25,9 @@ const PasswordInput = ({ value, onChange, placeholder = '•••••••�
         id={id}
         name={name}
         autoComplete={autoComplete}
+        autoCorrect="off"
+        autoCapitalize="none"
+        spellCheck="false"
       />
       {showToggle && (
         <button
