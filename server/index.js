@@ -10,6 +10,7 @@ app.use(cors({
     const allowed =
       !origin ||
       origin === 'http://localhost:3000' ||
+      origin === 'https://safe-vault-se.vercel.app' ||
       /^chrome-extension:\/\//.test(origin) ||
       /^moz-extension:\/\//.test(origin);
 
