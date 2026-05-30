@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import SiteFavicon from '../components/common/SiteFavicon';
-import EditEntryModal from '../components/modals/EditEntryModal';
-import SuccessModal from '../components/modals/SuccessModal';
 import { useVault } from '../context/VaultContext';
 import { getStrengthColor, getStrengthScore } from '../utils/passwordUtils';
 import './SecurityPage.css';
@@ -16,8 +14,6 @@ const SecurityPage = () => {
   const { getSecurityAnalysis } = useVault();
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedWeakEntry, setSelectedWeakEntry] = useState(null);
-  const [modal, setModal] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -31,23 +27,10 @@ const SecurityPage = () => {
     load();
   }, [getSecurityAnalysis]);
 
-  const circumference = 2 * Math.PI * 54; // r=54
+  const circumference = 2 * Math.PI * 80; 
   const strokeDashoffset = analysis
     ? circumference - (analysis.overallScore / 100) * circumference
     : circumference;
-
-  const handleEditSuccess = () => setModal('success');
-  const handleSuccessClose = async () => {
-    setModal(null);
-    setSelectedWeakEntry(null);
-    setIsLoading(true);
-    try {
-      const data = await getSecurityAnalysis();
-      setAnalysis(data);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="security-layout">
@@ -62,17 +45,17 @@ const SecurityPage = () => {
               {/* Score + Summary */}
               <div className="security-overview">
                 <div className="security-score-ring">
-                  <svg width="140" height="140" viewBox="0 0 140 140">
-                    <circle cx="70" cy="70" r="54" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+                  <svg width="200" height="200" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
                     <circle
-                      cx="70" cy="70" r="54"
+                      cx="100" cy="100" r="80"
                       fill="none"
                       stroke="url(#scoreGrad)"
                       strokeWidth="10"
                       strokeLinecap="round"
                       strokeDasharray={circumference}
                       strokeDashoffset={strokeDashoffset}
-                      transform="rotate(-90 70 70)"
+                      transform="rotate(-90 100 100)"
                       style={{ transition: 'stroke-dashoffset 1s ease' }}
                     />
                     <defs>
@@ -126,10 +109,9 @@ const SecurityPage = () => {
               <div className="security-content">
                 <div className="security-entries">
                   {analysis.entries.map(entry => (
-                    <button
+                    <div
                       key={entry._id}
-                      className={`security-entry-row ${selectedWeakEntry?._id === entry._id ? 'active' : ''}`}
-                      onClick={() => setSelectedWeakEntry(entry)}
+                      className="security-entry-row"
                     >
                       <SiteFavicon siteName={entry.siteName} size={36} />
                       <div className="security-entry-info">
@@ -147,21 +129,9 @@ const SecurityPage = () => {
                           />
                         </div>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
-
-                {selectedWeakEntry && (
-                  <div className="security-action-panel">
-                    <h3 className="security-action-title">Keep Your<br />Accounts Safe!</h3>
-                    <button
-                      className="security-edit-btn"
-                      onClick={() => setModal('edit')}
-                    >
-                      Edit Password
-                    </button>
-                  </div>
-                )}
               </div>
             </>
           ) : (
@@ -169,17 +139,6 @@ const SecurityPage = () => {
           )}
         </div>
       </div>
-
-      {modal === 'edit' && selectedWeakEntry && (
-        <EditEntryModal
-          entry={selectedWeakEntry}
-          onClose={() => setModal(null)}
-          onSuccess={handleEditSuccess}
-        />
-      )}
-      {modal === 'success' && (
-        <SuccessModal type="saved" onClose={handleSuccessClose} />
-      )}
     </div>
   );
 };

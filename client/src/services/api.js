@@ -12,11 +12,14 @@ api.interceptors.request.use((config) => {
 });
 
 export const authService = {
-  register:             (email, masterPassword) => api.post('/auth/register',     { email, masterPassword }),
-  login:                (email, masterPassword) => api.post('/auth/login',         { email, masterPassword }),
+  register:             (email, masterPassword) => api.post('/auth/register',      { email, masterPassword }),
+  login:                (email, masterPassword) => api.post('/auth/login',          { email, masterPassword }),
   getMe:                ()                      => api.get('/auth/me'),
-  verifyMasterPassword: (masterPassword)        => api.post('/auth/verify-master', { masterPassword }),
-  updateSettings:       (settings)              => api.patch('/auth/settings',      settings),
+  verifyMasterPassword: (masterPassword)        => api.post('/auth/verify-master',  { masterPassword }),
+  updateSettings:       (settings)              => api.patch('/auth/settings',       settings),
+  trustDevice:          (deviceId)              => api.post('/auth/trust-device',   { deviceId }),
+  verifyDevice:         (email, deviceId)       => api.post('/auth/verify-device',  { email, deviceId }),
+  removeDevice: (deviceId) => api.post('/auth/remove-device', { deviceId }),
 };
 
 export const vaultService = {

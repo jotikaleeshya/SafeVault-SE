@@ -61,7 +61,7 @@ const LoginPage = () => {
       setIsLoading(true);
       setError('');
       try {
-        await login(form.email, form.masterPassword);
+        await login(form.email, form.masterPassword, trustDevice);
         navigate('/dashboard');
       } catch (err) {
         setError(err.response?.data?.message || 'Authentication failed. Please try again.');
@@ -130,7 +130,6 @@ const LoginPage = () => {
           <div className="login-field">
             <div className="login-label-row">
               <label className="login-label">MASTER PASSWORD</label>
-              <button className="login-forgot-btn">FORGOT PASSWORD?</button>
             </div>
             <PasswordInput
               value={form.masterPassword}
@@ -166,7 +165,7 @@ const LoginPage = () => {
 
           <div className="login-secured">
             <div className="login-secured-dot" />
-            SECURED
+            SECURED WITH AES-256
           </div>
 
           <p className="login-switch">
