@@ -13,6 +13,8 @@ const SettingsPage = () => {
   const { user, updateSettings } = useAuth();
   const [autofill, setAutofill] = useState(() => user?.settings?.autofill ?? true);
   const navigate = useNavigate();
+  const [showCannotChangeModal, setShowCannotChangeModal] = useState(false);
+
 
   const handleAutofillToggle = async () => {
     const next = !autofill;
@@ -54,7 +56,7 @@ const SettingsPage = () => {
               >
                 <div className="settings-profile-key" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   MASTER PASSWORD
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }} strokeLinejoin="round" strokeLinecap="round">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="16" x2="12" y2="12" />
                     <line x1="12" y1="8" x2="12.01" y2="8" />

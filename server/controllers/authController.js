@@ -116,4 +116,90 @@ const updateSettings = async (req, res) => {
   }
 };
 
-module.exports = { register, login, verifyMasterPassword, getMe, updateSettings };
+// @desc   Trust this device
+// @route  POST /api/auth/trust-device
+// @access Private
+const trustDevice = async (req, res) => {
+  try {
+    const { deviceId } = req.body;
+    if (!deviceId) {
+      return res.status(400).json({ success: false, message: 'Device ID required' });
+    }
+
+    const user = await User.findById(req.user._id);
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 hari
+
+    // Hapus device lama kalau sudah expired
+    user.trustedDevices = user.trustedDevices.filter(d => d.expiresAt > new Date());
+
+    // Cek kalau deviceId sudah ada, update saja
+    const existing = user.trustedDevices.find(d => d.deviceId === deviceId);
+    if (existing) {
+      existing.expiresAt = expiresAt;
+    } else {
+      user.trustedDevices.push({ deviceId, expiresAt });
+    }
+
+    await user.save();
+    res.json({ success: true, message: 'Device trusted', expiresAt });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+// @desc   Verify trusted device
+// @route  POST /api/auth/verify-device
+// @access Public
+const verifyDevice = async (req, res) => {
+  try {
+    const { email, deviceId } = req.body;
+    if (!email || !deviceId) {
+      return res.status(400).json({ success: false, message: 'Email and device ID required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({ success: false, trusted: false });
+    }
+
+    const device = user.trustedDevices.find(
+      d => d.deviceId === deviceId && d.expiresAt > new Date()
+    );
+
+    if (!device) {
+      return res.json({ success: true, trusted: false });
+    }
+
+    // Generate token baru
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE || '7d',
+    });
+
+    res.json({
+      success: true,
+      trusted: true,
+      token,
+      user: { id: user._id, email: user.email, settings: user.settings },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+const removeDevice = async (req, res) => {
+  try {
+    const { deviceId } = req.body;
+    const user = await User.findById(req.user._id);
+    user.trustedDevices = user.trustedDevices.filter(d => d.deviceId !== deviceId);
+    await user.save();
+    res.json({ success: true, message: 'Device removed' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { register, login, verifyMasterPassword, getMe, updateSettings, trustDevice, verifyDevice, removeDevice };
+

@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { register, login, verifyMasterPassword, getMe, updateSettings } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
+
 
 const router = express.Router();
 
@@ -11,6 +11,7 @@ const validate = (req, res, next) => {
     return res.status(400).json({ success: false, message: errors.array()[0].msg });
   next();
 };
+const { register, login, verifyMasterPassword, getMe, updateSettings, trustDevice, verifyDevice, removeDevice } = require('../controllers/authController');
 
 router.post(
   '/register',
@@ -29,5 +30,8 @@ router.post(
 router.post('/verify-master', protect, verifyMasterPassword);
 router.get('/me', protect, getMe);
 router.patch('/settings', protect, updateSettings);
+router.post('/trust-device', protect, trustDevice);
+router.post('/verify-device', verifyDevice);
+router.post('/remove-device', protect, removeDevice);
 
 module.exports = router;

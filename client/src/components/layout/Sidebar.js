@@ -1,28 +1,30 @@
 import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-// import { useAuth } from '../../context/AuthContext';
 import { useVault } from '../../context/VaultContext';
 import './Sidebar.css';
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Sidebar - navigation layout component
  * Single Responsibility: navigation/layout only
  */
 const Sidebar = () => {
-  // const { logout } = useAuth();
+  const { logout } = useAuth();
   const { setSelectedEntry } = useVault();
   const navigate = useNavigate();
   const location = useLocation();
 
   const isSettings = location.pathname === '/settings';
+  const isAbout = location.pathname === '/about'
+  const isHelp = location.pathname === '/help'
 
   const handleAddEntry = () => {
     setSelectedEntry(null);
     navigate('/dashboard', { state: { openAddModal: true } });
   };
 
-  const handleLogout = () => {
-    // logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -77,7 +79,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        {isSettings ? (
+        {isSettings || isAbout || isHelp? (
           <button className="sidebar-logout-btn" onClick={handleLogout}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
