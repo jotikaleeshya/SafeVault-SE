@@ -16,21 +16,37 @@ const PasswordInput = ({ value, onChange, placeholder = '•••••••�
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
       </span>
-      <input
-        key={isVisible ? 'text' : 'password'}
-        type={isVisible ? 'text' : 'password'}
-        className="password-input-field"
-        value={value}
-        onChange={onChange}
-        onInput={onChange}
-        placeholder={placeholder}
-        id={id}
-        name={name}
-        autoComplete={autoComplete}
-        autoCorrect="off"
-        autoCapitalize="none"
-        spellCheck="false"
-      />
+      {isVisible ? (
+        <input
+          type="text"
+          className="password-input-field"
+          value={value}
+          onChange={onChange}
+          onInput={onChange}
+          placeholder={placeholder}
+          id={id}
+          name={name}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck="false"
+        />
+      ) : (
+        <input
+          type="password"
+          className="password-input-field"
+          value={value}
+          onChange={onChange}
+          onInput={onChange}
+          placeholder={placeholder}
+          id={id}
+          name={name}
+          autoComplete={autoComplete}
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck="false"
+        />
+      )}
       {showToggle && (
         <button
           type="button"
