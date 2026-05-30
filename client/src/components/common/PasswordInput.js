@@ -17,10 +17,12 @@ const PasswordInput = ({ value, onChange, placeholder = '•••••••�
         </svg>
       </span>
       <input
+        key={isVisible ? 'text' : 'password'}
         type={isVisible ? 'text' : 'password'}
         className="password-input-field"
         value={value}
         onChange={onChange}
+        onInput={onChange}
         placeholder={placeholder}
         id={id}
         name={name}
