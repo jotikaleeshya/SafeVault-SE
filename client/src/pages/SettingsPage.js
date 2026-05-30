@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import { useAuth } from '../context/AuthContext';
+import CannotChangePasswordModal from '../components/modals/CannotChangePasswordModal';
 import './SettingsPage.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,10 +47,22 @@ const SettingsPage = () => {
                   <div className="settings-profile-value">{user?.email}</div>
                 </div>
               </div>
-              <div>
-                <div className="settings-profile-key">MASTER PASSWORD</div>
-                <div className="settings-profile-value" style={{ letterSpacing: '3px', fontSize: '0.7rem' }}>
+              <div 
+                onClick={() => setShowCannotChangeModal(true)}
+                style={{ cursor: 'pointer' }}
+                title="Click for master password details"
+              >
+                <div className="settings-profile-key" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  MASTER PASSWORD
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                  </svg>
+                </div>
+                <div className="settings-profile-value" style={{ letterSpacing: '3px', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   ············
+                  <span style={{ fontSize: '0.7rem', opacity: 0.5, letterSpacing: 'normal' }}>(Cannot change)</span>
                 </div>
               </div>
             </div>
@@ -82,6 +95,9 @@ const SettingsPage = () => {
         ))}
         </div>
       </div>
+      {showCannotChangeModal && (
+        <CannotChangePasswordModal onClose={() => setShowCannotChangeModal(false)} />
+      )}
     </div>
   );
 };

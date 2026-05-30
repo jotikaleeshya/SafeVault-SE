@@ -37,7 +37,7 @@ const VaultEntrySchema = new mongoose.Schema(
     },
     passwordStrength: {
       type: String,
-      enum: ['Weak', 'Fair', 'Strong', 'Impenetrable'],
+      enum: ['Weak', 'Medium', 'Strong'],
       default: 'Weak',
     },
     strengthScore: {

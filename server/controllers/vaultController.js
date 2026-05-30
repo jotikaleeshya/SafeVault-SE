@@ -13,9 +13,8 @@ const calculatePasswordStrength = (password) => {
   if (/[^A-Za-z0-9]/.test(password)) score += 10;
 
   let label = 'Weak';
-  if (score >= 80) label = 'Impenetrable';
-  else if (score >= 60) label = 'Strong';
-  else if (score >= 40) label = 'Fair';
+  if (score >= 75) label = 'Strong';
+  else if (score >= 40) label = 'Medium';
 
   return { score: Math.min(score, 100), label };
 };
@@ -185,8 +184,8 @@ const getSecurityAnalysis = async (req, res) => {
   try {
     const entries = await VaultEntry.find({ user: req.user._id }).select('siteName username passwordStrength strengthScore favicon createdAt updatedAt');
 
-    const strong = entries.filter(e => e.passwordStrength === 'Impenetrable' || e.passwordStrength === 'Strong');
-    const weak = entries.filter(e => e.passwordStrength === 'Fair');
+    const strong = entries.filter(e => e.passwordStrength === 'Strong');
+    const weak = entries.filter(e => e.passwordStrength === 'Medium');
     const risk = entries.filter(e => e.passwordStrength === 'Weak');
 
     const totalScore = entries.length > 0
