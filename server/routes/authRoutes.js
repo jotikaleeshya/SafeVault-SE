@@ -16,8 +16,8 @@ const { register, login, verifyMasterPassword, getMe, updateSettings, trustDevic
 router.post(
   '/register',
   [
-    body('email').isEmail().normalizeEmail().withMessage('Email format is invalid!'), 
-    body('masterPassword').isLength({ min: 8 }).withMessage('Please enter password with minimum of 8 characters!')
+    body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email address.'), 
+    body('masterPassword').isLength({ min: 8 }).withMessage('Master password must be at least 8 characters.')
   ],
   validate,
   register

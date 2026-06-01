@@ -30,6 +30,14 @@ const LoginPage = () => {
       setError('Email and master password are required.');
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (form.masterPassword.length < 8) {
+      setError('Master password must be at least 8 characters.');
+      return;
+    }
     // Show cannot change warning first
     setShowCannotChangeModal(true);
   };
