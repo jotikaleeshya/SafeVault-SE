@@ -38,6 +38,18 @@ const LoginPage = () => {
       setError('Master password must be at least 8 characters.');
       return;
     }
+    if (!/[A-Z]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one uppercase letter.');
+      return;
+    }
+    if (!/[a-z]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one lowercase letter.');
+      return;
+    }
+    if (!/[^A-Za-z0-9]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one special character.');
+      return;
+    }
     // Show cannot change warning first
     setShowCannotChangeModal(true);
   };
