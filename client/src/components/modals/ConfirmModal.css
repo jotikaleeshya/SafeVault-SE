@@ -157,12 +157,3 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-.confirm-primary-btn--danger {
-  background: #ef4444;
-  border-color: #ef4444;
-}
-
-.confirm-primary-btn--danger:hover {
-  background: #dc2626;
-}
