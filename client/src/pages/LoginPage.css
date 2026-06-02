@@ -283,3 +283,11 @@
   color: var(--text-muted);
   font-family: var(--font-display);
 }
+
+.login-card .strength-bar-container {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.login-card .strength-segment {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
