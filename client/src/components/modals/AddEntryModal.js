@@ -112,7 +112,7 @@ const AddEntryModal = ({ onClose, onSuccess }) => {
             </div>
 
             <div className="entry-modal-field">
-              <label className="entry-modal-label">USERNAME / EMAIL</label>
+              <label className="entry-modal-label">EMAIL</label>
               <div className="entry-modal-input-wrap">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="input-prefix-icon">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
