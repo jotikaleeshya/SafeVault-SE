@@ -131,6 +131,7 @@ const AddEntryModal = ({ onClose, onSuccess }) => {
               <PasswordInput
                 value={form.password}
                 onChange={handleChange('password')}
+                placeholder='Your Password'
               />
               {form.password && (
                 <div style={{ marginTop: 8 }}>

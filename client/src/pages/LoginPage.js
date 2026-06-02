@@ -155,6 +155,7 @@ const LoginPage = () => {
               value={form.masterPassword}
               onChange={handleChange('masterPassword')}
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              placeholder='Master Password'
             />
           </div>
 
