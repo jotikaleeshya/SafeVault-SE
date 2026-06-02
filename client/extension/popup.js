@@ -237,6 +237,8 @@ async function loadMainView() {
   try {
     const { sv_token: token } = await storage.get(['sv_token']);
     const [entries, settings] = await Promise.all([apiGetEntries(token), apiGetSettings(token)]);
+    console.log('Settings:', settings);
+    console.log('Autofill enabled:', settings?.autofill);
     const autofillEnabled = settings?.autofill ?? true;
     const matched = entries.filter((e) => matchesDomain(e, hostname));
 
