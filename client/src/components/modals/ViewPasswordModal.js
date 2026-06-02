@@ -60,6 +60,7 @@ const ViewPasswordModal = ({ onClose, onVerified }) => {
               onChange={(e) => { setMasterPassword(e.target.value); setError(''); }}
               showToggle={true}
               autoComplete="new-password"
+              placeholder='Master Password'
             />
           </div>
         </div>

@@ -62,7 +62,9 @@ const AddEntryModal = ({ onClose, onSuccess }) => {
           <div className="entry-modal-header">
             <div className="entry-modal-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <path d="M12 3L5 7V12C5 16.5 7.5 19.5 12 21M12 3L19 7V14" />
+                <circle cx="18" cy="18" r="4" />
+                <path d="M18 16v4M16 18h4" />
               </svg>
             </div>
             <div>

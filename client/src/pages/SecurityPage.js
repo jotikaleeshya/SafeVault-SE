@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
-import Topbar from '../components/layout/Topbar';
 import SiteFavicon from '../components/common/SiteFavicon';
 import { useVault } from '../context/VaultContext';
 import { getStrengthColor, getStrengthScore } from '../utils/passwordUtils';
@@ -36,7 +35,6 @@ const SecurityPage = () => {
     <div className="security-layout">
       <Sidebar />
       <div className="security-main">
-        <Topbar />
         <div className="security-body">
           {isLoading ? (
             <div className="security-loading">Loading security analysis...</div>
