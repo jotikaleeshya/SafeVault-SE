@@ -21,6 +21,7 @@ const PasswordInput = ({ value, onChange, placeholder = '', id, name, autoComple
         className="password-input-field"
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
         id={id}
         name={name}
         autoComplete={autoComplete}
