@@ -21,7 +21,7 @@ const StrengthBar = ({ password }) => {
       <div className="strength-bar-header">
         <span className="strength-label" style={{ color }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill={color} style={{ marginRight: 4 }}>
-            <path d="M12 2L3.09 8.26 4 21h16l.91-12.74L12 2z" />
+            <path d="M12 2L4.5 6.2V11.5C4.5 17 8 20 12 22C16 20 19.5 17 19.5 11.5V6.2L12 2Z" />
           </svg>
           {label}
         </span>
