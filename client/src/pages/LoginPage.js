@@ -56,7 +56,7 @@ const LoginPage = () => {
       return;
     }
     const { score } = calculatePasswordStrength(form.masterPassword);
-    if (score < 75) {
+    if (score < 40) {
       setShowWeakPasswordModal(true);
       return;
     }

@@ -30,7 +30,7 @@ const AddEntryModal = ({ onClose, onSuccess }) => {
     }
 
     const { score } = calculatePasswordStrength(form.password);
-    if (score < 75) {
+    if (score < 40) {
       setShowWeakModal(true);
       return;
     }

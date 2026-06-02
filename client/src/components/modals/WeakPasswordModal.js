@@ -2,13 +2,14 @@ import React from 'react';
 import ModalOverlay from './ModalOverlay';
 import { calculatePasswordStrength } from '../../utils/passwordUtils';
 import './ConfirmModal.css';
+import StrengthBar from '../common/StrengthBar';
 
 /**
  * WeakPasswordModal - warns user that their password is weak
  * Single Responsibility: weak password warning and choice to continue
  */
 const WeakPasswordModal = ({ password, onClose, onConfirm }) => {
-  const { score, label, color } = calculatePasswordStrength(password);
+  const { label } = calculatePasswordStrength(password);
 
   return (
     <ModalOverlay onClose={onClose} size="sm">
@@ -27,25 +28,7 @@ const WeakPasswordModal = ({ password, onClose, onConfirm }) => {
         </p>
 
         <div className="confirm-modal-body">
-          <div className="confirm-password-strength-info" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid var(--border-subtle)',
-            padding: '12px',
-            borderRadius: 'var(--radius-md)',
-            width: '100%',
-            textAlign: 'left'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Strength Score:</span>
-              <span style={{ color: color, fontWeight: '700' }}>{score}%</span>
-            </div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-              <div style={{ width: `${score}%`, height: '100%', background: color, transition: 'width 0.3s ease' }} />
-            </div>
-          </div>
+          <StrengthBar password={password} />
         </div>
 
         <div className="confirm-modal-actions">
