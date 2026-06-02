@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import PasswordInput from '../components/common/PasswordInput';
 import CannotChangePasswordModal from '../components/modals/CannotChangePasswordModal';
 import './LoginPage.css';
+import { authService } from '../services/api';
 
 /**
  * LoginPage - entry point for user authentication
@@ -64,6 +65,15 @@ const LoginPage = () => {
     setError('');
     try {
       await register(form.email, form.masterPassword);
+      localStorage.setItem('safevault_email', form.email);
+      if (trustDevice) {
+        let deviceId = localStorage.getItem('safevault_device_id');
+        if (!deviceId) {
+          deviceId = crypto.randomUUID();
+          localStorage.setItem('safevault_device_id', deviceId);
+        }
+        await authService.trustDevice(deviceId);
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed. Please try again.');
@@ -159,17 +169,17 @@ const LoginPage = () => {
             />
           </div>
 
-          {mode === 'login' && (
-            <label className="login-trust">
-              <input
-                type="checkbox"
-                checked={trustDevice}
-                onChange={(e) => setTrustDevice(e.target.checked)}
-                className="login-trust-checkbox"
-              />
-              Trust this device for 30 days
-            </label>
-          )}
+          
+          <label className="login-trust">
+            <input
+              type="checkbox"
+              checked={trustDevice}
+              onChange={(e) => setTrustDevice(e.target.checked)}
+              className="login-trust-checkbox"
+            />
+            Trust this device for 30 days
+          </label>
+          
 
           <button
             className="login-submit-btn"
