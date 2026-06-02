@@ -193,13 +193,20 @@ function buildEntryCard(entry, autofillEnabled) {
   const actions = document.createElement('div');
   actions.className = 'entry-actions';
 
-  if (autofillEnabled) {
-    const autofillBtn = document.createElement('button');
-    autofillBtn.className = 'btn-autofill';
-    autofillBtn.textContent = 'Autofill';
-    autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
-    actions.append(autofillBtn);
+  if (!autofillEnabled) {
+    const banner = document.createElement('div');
+    banner.className = 'autofill-disabled-banner';
+    banner.textContent = '⚠️ Autofill is disabled. Enable it in Settings.';
+    card.append(site, uname, banner, actions);
+    return card;
   }
+
+  // Kalau sampai sini berarti autofill enabled
+  const autofillBtn = document.createElement('button');
+  autofillBtn.className = 'btn-autofill';
+  autofillBtn.textContent = 'Autofill';
+  autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
+  actions.append(autofillBtn);
 
   const copyBtn = document.createElement('button');
   copyBtn.className = 'btn-copy';
