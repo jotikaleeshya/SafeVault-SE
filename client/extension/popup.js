@@ -178,6 +178,7 @@ async function handleCopy(entry, btn) {
 // ── Entry card ───────────────────────────────────────────────────────────────
 
 function buildEntryCard(entry, autofillEnabled) {
+  console.log('buildEntryCard autofillEnabled:', autofillEnabled);
   const card = document.createElement('div');
   card.className = 'entry-card';
 
