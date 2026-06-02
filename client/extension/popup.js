@@ -249,17 +249,12 @@ async function loadMainView() {
   try {
     const { sv_token: token } = await storage.get(['sv_token']);
     const [entries, settings] = await Promise.all([apiGetEntries(token), apiGetSettings(token)]);
-    console.log('Settings:', settings);
-    console.log('Autofill enabled:', settings?.autofill);
     const autofillEnabled = settings?.autofill ?? true;
-    const matched = entries.filter((e) => matchesDomain(e, hostname));
 
     hide(loadingEl);
 
-    if (matched.length === 0) {
-      show(noEntriesEl);
-    } else if (!autofillEnabled) {
-      // Tampilkan satu warning saja
+    // Cek autofill dulu sebelum apapun
+    if (!autofillEnabled) {
       const warn = document.createElement('div');
       warn.className = 'state-msg';
       warn.innerHTML = `
@@ -272,6 +267,14 @@ async function loadMainView() {
         <p class="hint">Enable it in SafeVault Settings to use this extension.</p>
       `;
       listEl.appendChild(warn);
+      return;
+    }
+
+    // Baru cek domain
+    const matched = entries.filter((e) => matchesDomain(e, hostname));
+
+    if (matched.length === 0) {
+      show(noEntriesEl);
     } else {
       matched.forEach((e) => listEl.appendChild(buildEntryCard(e, autofillEnabled)));
     }
