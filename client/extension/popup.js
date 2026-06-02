@@ -1,5 +1,5 @@
 // Change this if your server runs on a different URL
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://safevault-se-production.up.railway.app/api';
 
 // ── Storage helpers ──────────────────────────────────────────────────────────
 
