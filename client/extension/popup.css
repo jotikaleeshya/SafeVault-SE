@@ -313,3 +313,8 @@ button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
 .toggle-pw-btn:hover {
   color: #8b9cc8;
 }
+
+#master-password[type="password"] {
+  font-size: 16px;
+  letter-spacing: 4px;
+}
