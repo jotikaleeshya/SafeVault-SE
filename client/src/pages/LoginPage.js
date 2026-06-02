@@ -205,8 +205,8 @@ const LoginPage = () => {
             disabled={isLoading}
           >
             {isLoading
-              ? (mode === 'login' ? 'Signing In...' : 'Creating Vault...')
-              : (mode === 'login' ? 'Sign In →' : 'Create Vault →')
+              ? (mode === 'login' ? 'Logging In...' : 'Creating Vault...')
+              : (mode === 'login' ? 'Log In →' : 'Create Vault →')
             }
           </button>
 
@@ -227,7 +227,7 @@ const LoginPage = () => {
             ) : (
               <>Already have an account?{' '}
                 <button className="login-switch-btn" onClick={() => setMode('login')}>
-                  Sign In
+                  Log In
                 </button>
               </>
             )}
