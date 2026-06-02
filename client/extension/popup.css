@@ -285,3 +285,50 @@ button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 .toast.show { opacity: 1; }
 .toast.error-toast { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.25); }
+
+
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrap input {
+  padding-right: 34px;
+}
+
+.toggle-pw-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #4a5578;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.toggle-pw-btn:hover {
+  color: #8b9cc8;
+}
+
+#master-password {
+  letter-spacing: 2px;
+}
+
+#master-password::placeholder {
+  letter-spacing: normal;
+  font-size: 13px;
+}
+
+.autofill-disabled-banner {
+  font-size: 11px;
+  color: #eab308;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin-bottom: 8px;
+}

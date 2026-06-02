@@ -31,6 +31,7 @@ const DashboardPage = () => {
   const [revealedEntry, setRevealedEntry] = useState(null);
   const [visiblePassword, setVisiblePassword] = useState(false);
   const [copiedField, setCopiedField] = useState(null);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   // Modal states
   const [modal, setModal] = useState(null);
@@ -53,19 +54,33 @@ const DashboardPage = () => {
     e.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectEntry = useCallback((entry) => {
-    setSelectedEntry(entry);
+  const handleSelectEntry = useCallback(async (entry) => {
+  // Kalau klik entry yang sama, tidak perlu apa-apa
+  if (selectedEntry?._id === entry._id && revealedEntry) return;
+
+  setSelectedEntry(entry);
+  setVisiblePassword(false);
+  setCopiedField(null);
+
+  if (isUnlocked) {
+    try {
+      const full = await revealEntry(entry._id);
+      setRevealedEntry(full);
+    } catch {
+      setModal('view-gate');
+    }
+  } else {
     setRevealedEntry(null);
-    setVisiblePassword(false);
-    setCopiedField(null);
     setModal('view-gate');
-  }, [setSelectedEntry]);
+  }
+}, [setSelectedEntry, revealEntry, isUnlocked, selectedEntry, revealedEntry]);
 
   const handleMasterVerified = useCallback(async () => {
     if (!selectedEntry) return;
     try {
       const full = await revealEntry(selectedEntry._id);
       setRevealedEntry(full);
+      setIsUnlocked(true); // unlock untuk sesi ini
       setModal(null);
     } catch {
       setModal(null);

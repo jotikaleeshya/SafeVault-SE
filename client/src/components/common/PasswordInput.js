@@ -5,7 +5,7 @@ import './PasswordInput.css';
  * PasswordInput - reusable password field with show/hide toggle
  * Single Responsibility: password input UI only
  */
-const PasswordInput = ({ value, onChange, placeholder = '••••••••••••', id, name, autoComplete, showToggle = true }) => {
+const PasswordInput = ({ value, onChange, placeholder = '', id, name, autoComplete, showToggle = true }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (

@@ -1,5 +1,5 @@
 // Change this if your server runs on a different URL
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://safevault-se-production.up.railway.app/api';
 
 // ── Storage helpers ──────────────────────────────────────────────────────────
 
@@ -85,6 +85,17 @@ function matchesDomain(entry, hostname) {
 // ── DOM shortcuts ────────────────────────────────────────────────────────────
 
 const $ = (id) => document.getElementById(id);
+
+document.getElementById('toggle-password').addEventListener('click', () => {
+  const input = document.getElementById('master-password');
+  const icon = document.getElementById('eye-icon');
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  icon.innerHTML = isPassword
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+});
+
 const show = (el) => el.classList.remove('hidden');
 const hide = (el) => el.classList.add('hidden');
 
@@ -170,6 +181,21 @@ function buildEntryCard(entry, autofillEnabled) {
   const card = document.createElement('div');
   card.className = 'entry-card';
 
+  if (!autofillEnabled) {
+    const banner = document.createElement('div');
+    banner.className = 'autofill-disabled-banner';
+    banner.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      Autofill is disabled. Enable it in Settings.
+    `;
+    card.append(banner);
+    return card;
+  }
+
   const site = document.createElement('div');
   site.className = 'entry-site';
   site.textContent = entry.siteName || entry.siteURL || 'Unknown site';
@@ -178,23 +204,20 @@ function buildEntryCard(entry, autofillEnabled) {
   uname.className = 'entry-username';
   uname.textContent = entry.username || '—';
 
-  const actions = document.createElement('div');
-  actions.className = 'entry-actions';
-
-  if (autofillEnabled) {
-    const autofillBtn = document.createElement('button');
-    autofillBtn.className = 'btn-autofill';
-    autofillBtn.textContent = 'Autofill';
-    autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
-    actions.append(autofillBtn);
-  }
+  const autofillBtn = document.createElement('button');
+  autofillBtn.className = 'btn-autofill';
+  autofillBtn.textContent = 'Autofill';
+  autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
 
   const copyBtn = document.createElement('button');
   copyBtn.className = 'btn-copy';
   copyBtn.textContent = 'Copy pw';
   copyBtn.addEventListener('click', () => handleCopy(entry, copyBtn));
 
-  actions.append(copyBtn);
+  const actions = document.createElement('div');
+  actions.className = 'entry-actions';
+  actions.append(autofillBtn, copyBtn);
+
   card.append(site, uname, actions);
   return card;
 }
@@ -226,6 +249,8 @@ async function loadMainView() {
   try {
     const { sv_token: token } = await storage.get(['sv_token']);
     const [entries, settings] = await Promise.all([apiGetEntries(token), apiGetSettings(token)]);
+    console.log('Settings:', settings);
+    console.log('Autofill enabled:', settings?.autofill);
     const autofillEnabled = settings?.autofill ?? true;
     const matched = entries.filter((e) => matchesDomain(e, hostname));
 
@@ -233,6 +258,20 @@ async function loadMainView() {
 
     if (matched.length === 0) {
       show(noEntriesEl);
+    } else if (!autofillEnabled) {
+      // Tampilkan satu warning saja
+      const warn = document.createElement('div');
+      warn.className = 'state-msg';
+      warn.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <p>Autofill is disabled.</p>
+        <p class="hint">Enable it in SafeVault Settings to use this extension.</p>
+      `;
+      listEl.appendChild(warn);
     } else {
       matched.forEach((e) => listEl.appendChild(buildEntryCard(e, autofillEnabled)));
     }

@@ -4,6 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import PasswordInput from '../components/common/PasswordInput';
 import CannotChangePasswordModal from '../components/modals/CannotChangePasswordModal';
 import './LoginPage.css';
+import { authService } from '../services/api';
+import { calculatePasswordStrength } from '../utils/passwordUtils';
+import WeakPasswordModal from '../components/modals/WeakPasswordModal';
+import StrengthBar from '../components/common/StrengthBar';
 
 /**
  * LoginPage - entry point for user authentication
@@ -19,6 +23,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCannotChangeModal, setShowCannotChangeModal] = useState(false);
+  const [showWeakPasswordModal, setShowWeakPasswordModal] = useState(false);
 
   const handleChange = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }));
@@ -30,7 +35,36 @@ const LoginPage = () => {
       setError('Email and master password are required.');
       return;
     }
-    // Show cannot change warning first
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (form.masterPassword.length < 8) {
+      setError('Master password must be at least 8 characters.');
+      return;
+    }
+    if (!/[A-Z]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one uppercase letter.');
+      return;
+    }
+    if (!/[a-z]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one lowercase letter.');
+      return;
+    }
+    if (!/[^A-Za-z0-9]/.test(form.masterPassword)) {
+      setError('Master password must contain at least one special character.');
+      return;
+    }
+    const { score } = calculatePasswordStrength(form.masterPassword);
+    if (score < 75) {
+      setShowWeakPasswordModal(true);
+      return;
+    }
+    setShowCannotChangeModal(true);
+  };
+
+  const handleWeakPasswordContinue = () => {
+    setShowWeakPasswordModal(false);
     setShowCannotChangeModal(true);
   };
 
@@ -44,6 +78,15 @@ const LoginPage = () => {
     setError('');
     try {
       await register(form.email, form.masterPassword);
+      localStorage.setItem('safevault_email', form.email);
+      if (trustDevice) {
+        let deviceId = localStorage.getItem('safevault_device_id');
+        if (!deviceId) {
+          deviceId = crypto.randomUUID();
+          localStorage.setItem('safevault_device_id', deviceId);
+        }
+        await authService.trustDevice(deviceId);
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Authentication failed. Please try again.');
@@ -135,20 +178,26 @@ const LoginPage = () => {
               value={form.masterPassword}
               onChange={handleChange('masterPassword')}
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              placeholder='Master Password'
             />
           </div>
 
-          {mode === 'login' && (
-            <label className="login-trust">
-              <input
-                type="checkbox"
-                checked={trustDevice}
-                onChange={(e) => setTrustDevice(e.target.checked)}
-                className="login-trust-checkbox"
-              />
-              Trust this device for 30 days
-            </label>
+          
+          {mode === 'register' && form.masterPassword && (
+            <StrengthBar password={form.masterPassword} />
           )}
+          
+          
+          <label className="login-trust">
+            <input
+              type="checkbox"
+              checked={trustDevice}
+              onChange={(e) => setTrustDevice(e.target.checked)}
+              className="login-trust-checkbox"
+            />
+            Trust this device for 30 days
+          </label>
+          
 
           <button
             className="login-submit-btn"
@@ -196,6 +245,14 @@ const LoginPage = () => {
       <footer className="login-footer">
         © 2026 SAFEVAULT SECURITY SYSTEMS. ALL RIGHTS RESERVED.
       </footer>
+
+      {showWeakPasswordModal && (
+        <WeakPasswordModal
+          password={form.masterPassword}
+          onClose={() => setShowWeakPasswordModal(false)}
+          onConfirm={handleWeakPasswordContinue}
+        />
+      )}
 
       {showCannotChangeModal && (
         <CannotChangePasswordModal 
