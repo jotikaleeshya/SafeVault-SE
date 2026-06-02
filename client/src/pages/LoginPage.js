@@ -22,6 +22,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCannotChangeModal, setShowCannotChangeModal] = useState(false);
+  const [showWeakPasswordModal, setShowWeakPasswordModal] = useState(false);
 
   const handleChange = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }));
