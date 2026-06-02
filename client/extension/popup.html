@@ -28,9 +28,17 @@
           <input type="email" id="email" placeholder="your@email.com" autocomplete="email" required />
         </div>
         <div class="field">
-          <label for="master-password">Master Password</label>
+        <label for="master-password">Master Password</label>
+        <div class="password-wrap">
           <input type="password" id="master-password" placeholder="Master password" required />
+          <button type="button" id="toggle-password" class="toggle-pw-btn">
+            <svg id="eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
         </div>
+      </div>
         <div id="login-error" class="error hidden"></div>
         <button type="submit" id="login-btn">Log In</button>
       </form>
@@ -42,7 +50,7 @@
       <div class="header">
         <span class="logo">SV</span>
         <h1>SafeVault</h1>
-        <button id="logout-btn" class="icon-btn" title="Sign out">↩</button>
+        <button id="logout-btn" class="icon-btn" title="Log out">↩</button>
       </div>
 
       <div class="site-row">
