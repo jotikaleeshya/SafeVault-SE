@@ -314,7 +314,11 @@ button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
   color: #8b9cc8;
 }
 
-#master-password[type="password"] {
-  font-size: 16px;
-  letter-spacing: 4px;
+#master-password {
+  letter-spacing: 2px;
+}
+
+#master-password::placeholder {
+  letter-spacing: normal;
+  font-size: 13px;
 }
