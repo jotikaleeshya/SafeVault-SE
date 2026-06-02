@@ -184,21 +184,34 @@ const LoginPage = () => {
           {mode === 'register' && form.masterPassword && (() => {
             const { score, label, color } = calculatePasswordStrength(form.masterPassword);
             return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-md)',
+                padding: '10px 12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
+                  <span style={{ color, fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    </svg>
+                    {label}
+                  </span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{score}%</span>
+                </div>
                 <div style={{
                   width: '100%', height: '4px',
                   background: 'rgba(255,255,255,0.08)',
-                  borderRadius: '999px', overflow: 'hidden'
+                  borderRadius: '999px', overflow: 'hidden',
+                  display: 'flex', gap: '4px'
                 }}>
-                  <div style={{
-                    width: `${score}%`, height: '100%',
-                    background: color,
-                    transition: 'width 0.3s ease'
-                  }} />
+                  <div style={{ width: '32%', height: '100%', background: score >= 20 ? color : 'rgba(255,255,255,0.08)', borderRadius: '999px' }} />
+                  <div style={{ width: '32%', height: '100%', background: score >= 40 ? color : 'rgba(255,255,255,0.08)', borderRadius: '999px' }} />
+                  <div style={{ width: '32%', height: '100%', background: score >= 75 ? color : 'rgba(255,255,255,0.08)', borderRadius: '999px' }} />
                 </div>
-                <span style={{ fontSize: '0.72rem', color }}>
-                  {label}
-                </span>
               </div>
             );
           })()}
