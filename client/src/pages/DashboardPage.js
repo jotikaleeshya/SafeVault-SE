@@ -55,24 +55,25 @@ const DashboardPage = () => {
   );
 
   const handleSelectEntry = useCallback(async (entry) => {
-    setSelectedEntry(entry);
-    setRevealedEntry(null);
-    setVisiblePassword(false);
-    setCopiedField(null);
-    
-    if (isUnlocked) {
-      // Sudah verified sebelumnya, langsung reveal
-      try {
-        const full = await revealEntry(entry._id);
-        setRevealedEntry(full);
-      } catch {
-        setModal('view-gate');
-      }
-    } else {
-      // Belum verified, minta master password dulu
+  // Kalau klik entry yang sama, tidak perlu apa-apa
+  if (selectedEntry?._id === entry._id && revealedEntry) return;
+
+  setSelectedEntry(entry);
+  setVisiblePassword(false);
+  setCopiedField(null);
+
+  if (isUnlocked) {
+    try {
+      const full = await revealEntry(entry._id);
+      setRevealedEntry(full);
+    } catch {
       setModal('view-gate');
     }
-  }, [setSelectedEntry, revealEntry, isUnlocked]);
+  } else {
+    setRevealedEntry(null);
+    setModal('view-gate');
+  }
+}, [setSelectedEntry, revealEntry, isUnlocked, selectedEntry, revealedEntry]);
 
   const handleMasterVerified = useCallback(async () => {
     if (!selectedEntry) return;
@@ -85,7 +86,7 @@ const DashboardPage = () => {
       setModal(null);
     }
   }, [selectedEntry, revealEntry]);
-  
+
   const handleCopy = (text, field) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
