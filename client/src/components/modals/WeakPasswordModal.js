@@ -52,7 +52,7 @@ const WeakPasswordModal = ({ password, onClose, onConfirm }) => {
           <button className="confirm-cancel-btn" onClick={onClose}>
             Make It Stronger
           </button>
-          <button className="confirm-delete-button" onClick={onConfirm}>
+          <button className="confirm-delete-btn" onClick={onConfirm}>
             Continue Anyway
           </button>
         </div>
