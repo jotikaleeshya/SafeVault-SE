@@ -178,9 +178,23 @@ async function handleCopy(entry, btn) {
 // ── Entry card ───────────────────────────────────────────────────────────────
 
 function buildEntryCard(entry, autofillEnabled) {
-  console.log('buildEntryCard autofillEnabled:', autofillEnabled);
   const card = document.createElement('div');
   card.className = 'entry-card';
+
+  if (!autofillEnabled) {
+    const banner = document.createElement('div');
+    banner.className = 'autofill-disabled-banner';
+    banner.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      Autofill is disabled. Enable it in Settings.
+    `;
+    card.append(banner);
+    return card;
+  }
 
   const site = document.createElement('div');
   site.className = 'entry-site';
@@ -190,30 +204,20 @@ function buildEntryCard(entry, autofillEnabled) {
   uname.className = 'entry-username';
   uname.textContent = entry.username || '—';
 
-  const actions = document.createElement('div');
-  actions.className = 'entry-actions';
-
-  if (!autofillEnabled) {
-    const banner = document.createElement('div');
-    banner.className = 'autofill-disabled-banner';
-    banner.textContent = '⚠️ Autofill is disabled. Enable it in Settings.';
-    card.append(site, uname, banner, actions);
-    return card;
-  }
-
-  // Kalau sampai sini berarti autofill enabled
   const autofillBtn = document.createElement('button');
   autofillBtn.className = 'btn-autofill';
   autofillBtn.textContent = 'Autofill';
   autofillBtn.addEventListener('click', () => handleAutofill(entry, autofillBtn));
-  actions.append(autofillBtn);
 
   const copyBtn = document.createElement('button');
   copyBtn.className = 'btn-copy';
   copyBtn.textContent = 'Copy pw';
   copyBtn.addEventListener('click', () => handleCopy(entry, copyBtn));
 
-  actions.append(copyBtn);
+  const actions = document.createElement('div');
+  actions.className = 'entry-actions';
+  actions.append(autofillBtn, copyBtn);
+
   card.append(site, uname, actions);
   return card;
 }
@@ -254,6 +258,20 @@ async function loadMainView() {
 
     if (matched.length === 0) {
       show(noEntriesEl);
+    } else if (!autofillEnabled) {
+      // Tampilkan satu warning saja
+      const warn = document.createElement('div');
+      warn.className = 'state-msg';
+      warn.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <p>Autofill is disabled.</p>
+        <p class="hint">Enable it in SafeVault Settings to use this extension.</p>
+      `;
+      listEl.appendChild(warn);
     } else {
       matched.forEach((e) => listEl.appendChild(buildEntryCard(e, autofillEnabled)));
     }
