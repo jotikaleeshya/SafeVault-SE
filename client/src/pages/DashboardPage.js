@@ -31,6 +31,7 @@ const DashboardPage = () => {
   const [revealedEntry, setRevealedEntry] = useState(null);
   const [visiblePassword, setVisiblePassword] = useState(false);
   const [copiedField, setCopiedField] = useState(null);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   // Modal states
   const [modal, setModal] = useState(null);
@@ -53,25 +54,38 @@ const DashboardPage = () => {
     e.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectEntry = useCallback((entry) => {
+  const handleSelectEntry = useCallback(async (entry) => {
     setSelectedEntry(entry);
     setRevealedEntry(null);
     setVisiblePassword(false);
     setCopiedField(null);
-    setModal('view-gate');
-  }, [setSelectedEntry]);
+    
+    if (isUnlocked) {
+      // Sudah verified sebelumnya, langsung reveal
+      try {
+        const full = await revealEntry(entry._id);
+        setRevealedEntry(full);
+      } catch {
+        setModal('view-gate');
+      }
+    } else {
+      // Belum verified, minta master password dulu
+      setModal('view-gate');
+    }
+  }, [setSelectedEntry, revealEntry, isUnlocked]);
 
   const handleMasterVerified = useCallback(async () => {
     if (!selectedEntry) return;
     try {
       const full = await revealEntry(selectedEntry._id);
       setRevealedEntry(full);
+      setIsUnlocked(true); // unlock untuk sesi ini
       setModal(null);
     } catch {
       setModal(null);
     }
   }, [selectedEntry, revealEntry]);
-
+  
   const handleCopy = (text, field) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
