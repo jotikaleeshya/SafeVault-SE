@@ -5,6 +5,8 @@ import PasswordInput from '../components/common/PasswordInput';
 import CannotChangePasswordModal from '../components/modals/CannotChangePasswordModal';
 import './LoginPage.css';
 import { authService } from '../services/api';
+import { calculatePasswordStrength } from '../utils/passwordUtils';
+import WeakPasswordModal from '../components/modals/WeakPasswordModal';
 
 /**
  * LoginPage - entry point for user authentication
@@ -51,7 +53,16 @@ const LoginPage = () => {
       setError('Master password must contain at least one special character.');
       return;
     }
-    // Show cannot change warning first
+    const { score } = calculatePasswordStrength(form.masterPassword);
+    if (score < 75) {
+      setShowWeakPasswordModal(true);
+      return;
+    }
+    setShowCannotChangeModal(true);
+  };
+
+  const handleWeakPasswordContinue = () => {
+    setShowWeakPasswordModal(false);
     setShowCannotChangeModal(true);
   };
 
@@ -169,6 +180,27 @@ const LoginPage = () => {
             />
           </div>
 
+          {mode === 'register' && form.masterPassword && (() => {
+            const { score, label, color } = calculatePasswordStrength(form.masterPassword);
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{
+                  width: '100%', height: '4px',
+                  background: 'rgba(255,255,255,0.08)',
+                  borderRadius: '999px', overflow: 'hidden'
+                }}>
+                  <div style={{
+                    width: `${score}%`, height: '100%',
+                    background: color,
+                    transition: 'width 0.3s ease'
+                  }} />
+                </div>
+                <span style={{ fontSize: '0.72rem', color }}>
+                  {label}
+                </span>
+              </div>
+            );
+          })()}
           
           <label className="login-trust">
             <input
@@ -227,6 +259,14 @@ const LoginPage = () => {
       <footer className="login-footer">
         © 2026 SAFEVAULT SECURITY SYSTEMS. ALL RIGHTS RESERVED.
       </footer>
+
+      {showWeakPasswordModal && (
+        <WeakPasswordModal
+          password={form.masterPassword}
+          onClose={() => setShowWeakPasswordModal(false)}
+          onConfirm={handleWeakPasswordContinue}
+        />
+      )}
 
       {showCannotChangeModal && (
         <CannotChangePasswordModal 
