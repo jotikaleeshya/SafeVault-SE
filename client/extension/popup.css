@@ -28,7 +28,16 @@ body {
   background: #080e1f;
 }
 
-.logo { font-size: 20px; line-height: 1; }
+.topbar-brand-icon {
+  width: 34px;
+  height: 34px;
+  background: var(--accent-blue);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
 h1 {
   flex: 1;
