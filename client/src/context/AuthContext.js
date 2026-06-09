@@ -34,7 +34,7 @@ useEffect(() => {
     }
 
     // Fallback ke token biasa
-    const token = localStorage.getItem('safevault_token');
+    const token = localStorage.getItem('safevault_token') || sessionStorage.getItem('safevault_token');
     if (!token) {
       setIsLoading(false);
       return;
@@ -55,19 +55,24 @@ useEffect(() => {
 const login = useCallback(async (email, masterPassword, trustDevice = false) => {
   const res = await authService.login(email, masterPassword);
 
-  localStorage.setItem('safevault_token', res.data.token);
-  localStorage.setItem('safevault_email', res.data.user.email);
+  if (trustDevice) {
+    localStorage.setItem('safevault_token', res.data.token);
+    localStorage.setItem('safevault_email', res.data.user.email);
+  } else {
+    // Tanpa trust device — hilang saat browser ditutup
+    sessionStorage.setItem('safevault_token', res.data.token);
+    localStorage.removeItem('safevault_token');
+  }
+
   setUser(res.data.user);
   setIsAuthenticated(true);
 
   if (trustDevice) {
-    // Generate device ID kalau belum ada
     let deviceId = localStorage.getItem('safevault_device_id');
     if (!deviceId) {
       deviceId = crypto.randomUUID();
       localStorage.setItem('safevault_device_id', deviceId);
     }
-    // Simpan ke DB
     await authService.trustDevice(deviceId);
   }
 
