@@ -6,7 +6,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('safevault_token');
+  const token = localStorage.getItem('safevault_token') 
+             || sessionStorage.getItem('safevault_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
