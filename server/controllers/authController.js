@@ -2,10 +2,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d',
-  });
+const generateToken = (id, expiresIn = process.env.JWT_EXPIRE || '1d') => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn });
 };
 
 // @desc   Register / Create new vault
@@ -172,10 +170,7 @@ const verifyDevice = async (req, res) => {
     }
 
     // Generate token baru
-    const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE || '7d',
-    });
+    const token = generateToken(user._id, '30d');
 
     res.json({
       success: true,
