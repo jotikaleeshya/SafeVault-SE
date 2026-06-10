@@ -21,6 +21,7 @@ export const authService = {
   trustDevice:          (deviceId)              => api.post('/auth/trust-device',   { deviceId }),
   verifyDevice:         (email, deviceId)       => api.post('/auth/verify-device',  { email, deviceId }),
   removeDevice: (deviceId) => api.post('/auth/remove-device', { deviceId }),
+  checkEmail: (email) => api.post('/auth/check-email', { email }),
 };
 
 export const vaultService = {

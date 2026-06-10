@@ -196,5 +196,17 @@ const removeDevice = async (req, res) => {
   }
 };
 
-module.exports = { register, login, verifyMasterPassword, getMe, updateSettings, trustDevice, verifyDevice, removeDevice };
+
+const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const existing = await User.findOne({ email });
+    res.json({ success: true, exists: !!existing });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+module.exports = { register, login, verifyMasterPassword, getMe, updateSettings, trustDevice, verifyDevice, removeDevice, checkEmail}
 

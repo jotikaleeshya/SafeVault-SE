@@ -30,7 +30,7 @@ const LoginPage = () => {
     setError('');
   };
 
-  const handleRegisterSubmit = () => {
+  const handleRegisterSubmit = async () => {
     if (!form.email || !form.masterPassword) {
       setError('Email and master password are required.');
       return;
@@ -55,6 +55,21 @@ const LoginPage = () => {
       setError('Master password must contain at least one special character.');
       return;
     }
+
+    setIsLoading(true);
+    try {
+      const res = await authService.checkEmail(form.email);
+      if (res.data.exists) {
+        setError('An account with this email already exists.');
+        return;
+      }
+    } catch {
+      setError('Failed to verify email. Please try again.');
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+    
     const { score } = calculatePasswordStrength(form.masterPassword);
     if (score < 40) {
       setShowWeakPasswordModal(true);
