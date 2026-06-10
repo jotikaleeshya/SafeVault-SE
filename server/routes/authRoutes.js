@@ -36,6 +36,5 @@ router.patch('/settings', protect, updateSettings);
 router.post('/trust-device', protect, trustDevice);
 router.post('/verify-device', verifyDevice);
 router.post('/remove-device', protect, removeDevice);
-router.post('/check-email', checkEmail);
 
 module.exports = router;
